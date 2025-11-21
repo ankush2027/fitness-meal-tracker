@@ -1,18 +1,34 @@
 {
-  "name": "backend",
+  "name": "fitness-meal-tracker-backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "Express backend for the Fitness & Meal Tracker application",
+  "type": "module",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon server.js",
+    "start": "node server.js",
+    "lint": "echo \"No backend linter configured\""
   },
-  "keywords": [],
+  "keywords": [
+    "fitness",
+    "meal-tracker",
+    "express",
+    "mysql"
+  ],
   "author": "",
-  "license": "ISC",
-  "description": "",
+  "license": "MIT",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
-    "dotenv": "^17.2.3",
-    "express": "^5.1.0",
-    "mongoose": "^8.20.0"
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-validator": "^7.0.1",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.11.0",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
   }
 }
