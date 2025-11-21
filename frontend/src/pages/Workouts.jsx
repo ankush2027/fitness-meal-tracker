@@ -5,6 +5,8 @@ import {
   fetchWorkouts,
   updateWorkout,
 } from "../services/workoutService.js";
+import { useToast } from "../context/ToastContext.jsx";
+import LoadingSpinner from "../components/common/LoadingSpinner.jsx";
 
 const defaultForm = {
   workout_type: "",
@@ -19,6 +21,8 @@ const Workouts = () => {
   const [editingId, setEditingId] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const toast = useToast();
 
   const loadWorkouts = async () => {
     try {
@@ -44,17 +48,25 @@ const Workouts = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setError("");
+    setSubmitting(true);
     try {
       if (editingId) {
         await updateWorkout(editingId, form);
+        toast.success("Workout updated successfully!");
       } else {
         await createWorkout(form);
+        toast.success("Workout added successfully!");
       }
       setForm(defaultForm);
       setEditingId(null);
-      loadWorkouts();
+      await loadWorkouts();
     } catch (err) {
-      setError(err.response?.data?.message || "Unable to save workout");
+      const errorMsg = err.message || err.response?.data?.message || "Unable to save workout";
+      setError(errorMsg);
+      toast.error(errorMsg);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -69,12 +81,18 @@ const Workouts = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Delete this workout?")) return;
+    if (!window.confirm("Are you sure you want to delete this workout? This action cannot be undone.")) {
+      return;
+    }
+    setError("");
     try {
       await deleteWorkout(id);
-      loadWorkouts();
+      toast.success("Workout deleted successfully!");
+      await loadWorkouts();
     } catch (err) {
-      setError(err.response?.data?.message || "Unable to delete workout");
+      const errorMsg = err.message || err.response?.data?.message || "Unable to delete workout";
+      setError(errorMsg);
+      toast.error(errorMsg);
     }
   };
 
@@ -127,8 +145,8 @@ const Workouts = () => {
             />
           </label>
           <div className="form-actions">
-            <button type="submit" className="btn">
-              {editingId ? "Update" : "Add"} Workout
+            <button type="submit" className="btn" disabled={submitting}>
+              {submitting ? "Saving..." : editingId ? "Update" : "Add"} Workout
             </button>
             {editingId && (
               <button
@@ -148,45 +166,53 @@ const Workouts = () => {
         <div className="card">
           <h3>Recent Workouts</h3>
           {loading ? (
-            <p>Loading...</p>
+            <LoadingSpinner text="Loading workouts..." />
+          ) : workouts.length === 0 ? (
+            <div className="empty-state">
+              <p>No workouts logged yet. Add your first workout above!</p>
+            </div>
           ) : (
-            <table>
-              <thead>
-                <tr>
-                  <th>Type</th>
-                  <th>Duration</th>
-                  <th>Calories</th>
-                  <th>Date</th>
-                  <th />
-                </tr>
-              </thead>
-              <tbody>
-                {workouts.map((workout) => (
-                  <tr key={workout.id}>
-                    <td>{workout.workout_type}</td>
-                    <td>{workout.duration_minutes} min</td>
-                    <td>{workout.calories_burned}</td>
-                    <td>{workout.workout_date?.slice(0, 10)}</td>
-                    <td>
-                      <button
-                        type="button"
-                        className="link"
-                        onClick={() => handleEdit(workout)}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        type="button"
-                        className="link danger"
-                        onClick={() => handleDelete(workout.id)}
-                      >
-                        Delete
-                      </button>
-                    </td>
+            <div className="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Duration</th>
+                    <th>Calories</th>
+                    <th>Date</th>
+                    <th>Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {workouts.map((workout) => (
+                    <tr key={workout.id}>
+                      <td>{workout.workout_type}</td>
+                      <td>{workout.duration_minutes} min</td>
+                      <td>{workout.calories_burned}</td>
+                      <td>{workout.workout_date?.slice(0, 10)}</td>
+                      <td>
+                        <button
+                          type="button"
+                          className="link"
+                          onClick={() => handleEdit(workout)}
+                          aria-label={`Edit ${workout.workout_type} workout`}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          className="link danger"
+                          onClick={() => handleDelete(workout.id)}
+                          aria-label={`Delete ${workout.workout_type} workout`}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
       </div>

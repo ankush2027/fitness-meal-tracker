@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { login as loginService } from "../services/authService.js";
 import { useAuth } from "../context/AuthContext.jsx";
+import { useToast } from "../context/ToastContext.jsx";
 
 const Login = () => {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -10,6 +11,7 @@ const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const toast = useToast();
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -23,10 +25,13 @@ const Login = () => {
     try {
       const data = await loginService(form);
       login(data);
+      toast.success("Welcome back!");
       const redirectTo = location.state?.from?.pathname || "/";
       navigate(redirectTo);
     } catch (err) {
-      setError(err.response?.data?.message || "Unable to login");
+      const errorMsg = err.response?.data?.message || "Unable to login";
+      setError(errorMsg);
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
     }

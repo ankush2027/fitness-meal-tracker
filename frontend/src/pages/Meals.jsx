@@ -5,6 +5,8 @@ import {
   fetchMeals,
   updateMeal,
 } from "../services/mealService.js";
+import { useToast } from "../context/ToastContext.jsx";
+import LoadingSpinner from "../components/common/LoadingSpinner.jsx";
 
 const defaultForm = {
   meal_name: "",
@@ -21,14 +23,22 @@ const Meals = () => {
   const [form, setForm] = useState(defaultForm);
   const [editingId, setEditingId] = useState(null);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const toast = useToast();
 
   const loadMeals = async () => {
     try {
+      setLoading(true);
       const data = await fetchMeals();
       setMeals(data);
       setError("");
     } catch (err) {
-      setError(err.response?.data?.message || "Unable to load meals");
+      const errorMsg = err.response?.data?.message || "Unable to load meals";
+      setError(errorMsg);
+      toast.error(errorMsg);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -43,17 +53,25 @@ const Meals = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setError("");
+    setSubmitting(true);
     try {
       if (editingId) {
         await updateMeal(editingId, form);
+        toast.success("Meal updated successfully!");
       } else {
         await createMeal(form);
+        toast.success("Meal added successfully!");
       }
       setForm(defaultForm);
       setEditingId(null);
-      loadMeals();
+      await loadMeals();
     } catch (err) {
-      setError(err.response?.data?.message || "Unable to save meal");
+      const errorMsg = err.message || err.response?.data?.message || "Unable to save meal";
+      setError(errorMsg);
+      toast.error(errorMsg);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -71,12 +89,18 @@ const Meals = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Delete this meal?")) return;
+    if (!window.confirm("Are you sure you want to delete this meal? This action cannot be undone.")) {
+      return;
+    }
+    setError("");
     try {
       await deleteMeal(id);
-      loadMeals();
+      toast.success("Meal deleted successfully!");
+      await loadMeals();
     } catch (err) {
-      setError(err.response?.data?.message || "Unable to delete meal");
+      const errorMsg = err.message || err.response?.data?.message || "Unable to delete meal";
+      setError(errorMsg);
+      toast.error(errorMsg);
     }
   };
 
@@ -158,8 +182,8 @@ const Meals = () => {
             />
           </label>
           <div className="form-actions">
-            <button type="submit" className="btn">
-              {editingId ? "Update" : "Add"} Meal
+            <button type="submit" className="btn" disabled={submitting}>
+              {submitting ? "Saving..." : editingId ? "Update" : "Add"} Meal
             </button>
             {editingId && (
               <button
@@ -178,43 +202,59 @@ const Meals = () => {
 
         <div className="card">
           <h3>Logged Meals</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Calories</th>
-                <th>Macros (P/C/F)</th>
-                <th>Date</th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {meals.map((meal) => (
-                <tr key={meal.id}>
-                  <td>{meal.meal_name}</td>
-                  <td>{meal.meal_type}</td>
-                  <td>{meal.calories}</td>
-                  <td>
-                    {meal.protein}/{meal.carbs}/{meal.fats}
-                  </td>
-                  <td>{meal.meal_date?.slice(0, 10)}</td>
-                  <td>
-                    <button type="button" className="link" onClick={() => handleEdit(meal)}>
-                      Edit
-                    </button>
-                    <button
-                      type="button"
-                      className="link danger"
-                      onClick={() => handleDelete(meal.id)}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          {loading ? (
+            <LoadingSpinner text="Loading meals..." />
+          ) : meals.length === 0 ? (
+            <div className="empty-state">
+              <p>No meals logged yet. Add your first meal above!</p>
+            </div>
+          ) : (
+            <div className="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Calories</th>
+                    <th>Macros (P/C/F)</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {meals.map((meal) => (
+                    <tr key={meal.id}>
+                      <td>{meal.meal_name}</td>
+                      <td className="capitalize">{meal.meal_type}</td>
+                      <td>{meal.calories}</td>
+                      <td>
+                        {meal.protein}g/{meal.carbs}g/{meal.fats}g
+                      </td>
+                      <td>{meal.meal_date?.slice(0, 10)}</td>
+                      <td>
+                        <button
+                          type="button"
+                          className="link"
+                          onClick={() => handleEdit(meal)}
+                          aria-label={`Edit ${meal.meal_name}`}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          className="link danger"
+                          onClick={() => handleDelete(meal.id)}
+                          aria-label={`Delete ${meal.meal_name}`}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
     </div>

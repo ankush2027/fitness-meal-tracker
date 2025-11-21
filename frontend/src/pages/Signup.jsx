@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { register as registerService } from "../services/authService.js";
 import { useAuth } from "../context/AuthContext.jsx";
+import { useToast } from "../context/ToastContext.jsx";
 
 const Signup = () => {
   const [form, setForm] = useState({
@@ -14,6 +15,7 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const toast = useToast();
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -27,9 +29,12 @@ const Signup = () => {
     try {
       const data = await registerService(form);
       login(data);
+      toast.success("Account created successfully! Welcome!");
       navigate("/");
     } catch (err) {
-      setError(err.response?.data?.message || "Unable to sign up");
+      const errorMsg = err.response?.data?.message || "Unable to sign up";
+      setError(errorMsg);
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -67,9 +72,13 @@ const Signup = () => {
             name="password"
             value={form.password}
             onChange={handleChange}
-            minLength={6}
+            minLength={8}
             required
+            placeholder="Min 8 chars, 1 uppercase, 1 lowercase, 1 number"
           />
+          <small className="form-hint">
+            Password must be at least 8 characters with uppercase, lowercase, and a number
+          </small>
         </label>
         <label>
           Goal

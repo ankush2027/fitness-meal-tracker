@@ -35,18 +35,26 @@ const Suggestions = () => {
           </select>
         </label>
         {error && <p className="error-text">{error}</p>}
-        <div className="suggestions-list">
-          {suggestions.map((suggestion) => (
-            <article className="suggestion-card" key={suggestion.id}>
-              <h3>{suggestion.title}</h3>
-              <p>{suggestion.description}</p>
-              <p className="muted">
-                Calories: {suggestion.calories} | Protein: {suggestion.protein}g | Carbs:{" "}
-                {suggestion.carbs}g | Fats: {suggestion.fats}g
-              </p>
-            </article>
-          ))}
-        </div>
+        {suggestions.length === 0 ? (
+          <div className="empty-state">
+            <p>No meal suggestions available for this goal.</p>
+          </div>
+        ) : (
+          <div className="suggestions-list">
+            {suggestions.map((suggestion) => (
+              <article className="suggestion-card" key={suggestion.id}>
+                <h3>{suggestion.title}</h3>
+                <p>{suggestion.description || "No description available."}</p>
+                <div className="suggestion-macros">
+                  <span><strong>Calories:</strong> {suggestion.calories || 0} kcal</span>
+                  <span><strong>Protein:</strong> {suggestion.protein || 0}g</span>
+                  <span><strong>Carbs:</strong> {suggestion.carbs || 0}g</span>
+                  <span><strong>Fats:</strong> {suggestion.fats || 0}g</span>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

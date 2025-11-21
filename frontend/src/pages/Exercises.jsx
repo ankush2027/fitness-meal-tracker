@@ -42,18 +42,32 @@ const Exercises = () => {
       </form>
       {error && <p className="error-text">{error}</p>}
       {loading ? (
-        <p>Loading...</p>
+        <div className="loading-state">
+          <p>Loading exercises...</p>
+        </div>
+      ) : exercises.length === 0 ? (
+        <div className="empty-state">
+          <p>No exercises found. Try a different search term.</p>
+        </div>
       ) : (
         <div className="exercise-grid">
           {exercises.map((exercise) => (
             <article className="card exercise-card" key={exercise.id}>
               <h3>{exercise.name}</h3>
-              <p>{exercise.description}</p>
+              <p>{exercise.description || "No description available."}</p>
               <p className="muted">
-                Target: {exercise.target_muscle} | Equipment: {exercise.equipment}
+                <strong>Target:</strong> {exercise.target_muscle || "N/A"} |{" "}
+                <strong>Equipment:</strong> {exercise.equipment || "N/A"}
               </p>
               {exercise.media_url && (
-                <img src={exercise.media_url} alt={exercise.name} loading="lazy" />
+                <img
+                  src={exercise.media_url}
+                  alt={exercise.name}
+                  loading="lazy"
+                  onError={(e) => {
+                    e.target.style.display = "none";
+                  }}
+                />
               )}
             </article>
           ))}
