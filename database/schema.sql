@@ -57,6 +57,28 @@ CREATE TABLE meal_suggestions (
   priority INT DEFAULT 1
 );
 
+CREATE TABLE water_logs (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  amount_ml INT NOT NULL,
+  logged_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  note VARCHAR(255),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE wellness_logs (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  mood ENUM('low', 'neutral', 'high') NOT NULL,
+  energy_level TINYINT UNSIGNED CHECK (energy_level BETWEEN 1 AND 10),
+  sleep_hours DECIMAL(4,2) CHECK (sleep_hours BETWEEN 0 AND 24),
+  notes VARCHAR(255),
+  log_date DATE NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
 INSERT INTO users (name, email, password, goal)
 VALUES
   ('Demo User', 'demo@example.com', '$2a$10$uCVIfgEEGDvkj8FW2tFdoObM5T3wD2udCgBMn/Yqana9XyFj7idDW', 'maintenance');
@@ -79,4 +101,13 @@ INSERT INTO workouts (user_id, workout_type, duration_minutes, calories_burned, 
 INSERT INTO meals (user_id, meal_name, meal_type, calories, protein, carbs, fats, meal_date) VALUES
   (1, 'Greek Yogurt Parfait', 'breakfast', 320, 24, 40, 8, DATE_SUB(CURDATE(), INTERVAL 1 DAY)),
   (1, 'Salmon Bowl', 'dinner', 520, 40, 45, 20, DATE_SUB(CURDATE(), INTERVAL 1 DAY));
+
+INSERT INTO water_logs (user_id, amount_ml, logged_at, note) VALUES
+  (1, 300, DATE_SUB(NOW(), INTERVAL 4 HOUR), 'Morning hydration'),
+  (1, 500, DATE_SUB(NOW(), INTERVAL 2 HOUR), 'Post workout'),
+  (1, 250, DATE_SUB(NOW(), INTERVAL 30 MINUTE), 'Afternoon sip');
+
+INSERT INTO wellness_logs (user_id, mood, energy_level, sleep_hours, notes, log_date) VALUES
+  (1, 'high', 8, 7.5, 'Feeling great after run', CURDATE()),
+  (1, 'neutral', 6, 6.0, 'Need more sleep', DATE_SUB(CURDATE(), INTERVAL 1 DAY));
 

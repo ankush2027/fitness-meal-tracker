@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import StatsCards from "../components/dashboard/StatsCards.jsx";
 import { MacroPieChart, WorkoutTrendChart } from "../components/dashboard/ChartCard.jsx";
+import ProgressRing from "../components/dashboard/ProgressRing.jsx";
 import { fetchDashboard } from "../services/dashboardService.js";
 import LoadingSpinner from "../components/common/LoadingSpinner.jsx";
 
@@ -53,8 +54,45 @@ const Dashboard = () => {
 
   return (
     <div className="page">
-      <h1>Progress Overview</h1>
+      <div className="page-header">
+        <div>
+          <p className="eyebrow">Welcome back</p>
+          <h1>Progress Overview</h1>
+          <p className="muted">Stay aligned with your nutrition, hydration, and wellness goals.</p>
+        </div>
+      </div>
+
       <StatsCards calories={data.calories || { consumed: 0, burned: 0, net: 0 }} />
+
+      <div className="responsive-grid auto-fit-300">
+        <ProgressRing
+          progress={data.water?.percent || 0}
+          value={`${data.water?.total || 0} ml`}
+          label={`Hydration goal (${data.water?.goal || 0} ml)`}
+        />
+        <div className="card wellness-card elevate">
+          <h4>Wellness snapshot</h4>
+          {data.wellness?.latest ? (
+            <div className="wellness-stats">
+              <div>
+                <p className="muted">Latest mood</p>
+                <span className={`badge badge-${data.wellness.latest.mood}`}>
+                  {data.wellness.latest.mood}
+                </span>
+                <p className="muted small">Energy {data.wellness.latest.energy_level}/10</p>
+              </div>
+              <div>
+                <p className="muted">Avg sleep (14d)</p>
+                <h2>{data.wellness.averages.sleepAvg} hrs</h2>
+                <p className="muted small">Energy avg {data.wellness.averages.energyAvg}/10</p>
+              </div>
+            </div>
+          ) : (
+            <p className="muted">Log a wellness entry to unlock insights.</p>
+          )}
+        </div>
+      </div>
+
       <div className="responsive-grid">
         <WorkoutTrendChart data={data.workouts || []} />
         <MacroPieChart data={data.macros || { protein: 0, carbs: 0, fats: 0 }} />
