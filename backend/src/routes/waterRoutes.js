@@ -12,10 +12,8 @@ const router = express.Router();
 
 router.use(protect);
 router.route("/").get(listWaterLogs).post(waterLogValidation, addWaterLog);
-router
-  .route("/:id")
-  .put(waterLogValidation, editWaterLog)
-  .delete(removeWaterLog);
+router.route("/:id").put(waterLogValidation, editWaterLog).delete(removeWaterLog);
 
 export default router;
+
 

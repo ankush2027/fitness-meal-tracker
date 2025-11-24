@@ -2,7 +2,7 @@ import api from "./apiClient.js";
 
 export const fetchWaterLogs = async () => {
   const { data } = await api.get("/water");
-  return data;
+  return data.logs;
 };
 
 export const createWaterLog = async (payload) => {
@@ -18,4 +18,5 @@ export const updateWaterLog = async (id, payload) => {
 export const deleteWaterLog = async (id) => {
   await api.delete(`/water/${id}`);
 };
+
 

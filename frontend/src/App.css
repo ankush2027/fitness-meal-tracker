@@ -168,6 +168,18 @@ select {
   font-size: 1rem;
 }
 
+textarea {
+  width: 100%;
+  min-height: 110px;
+  padding: 0.65rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.6rem;
+  margin-top: 0.25rem;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+}
+
 label {
   display: flex;
   flex-direction: column;
@@ -239,6 +251,119 @@ label {
   border-radius: 0.75rem;
   padding: 1rem;
   background: #f8fafc;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.quick-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin-bottom: 0.35rem;
+}
+
+.muted-sm {
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+
+.hydration-card {
+  background: linear-gradient(135deg, #cffafe, #e0f2fe);
+  border: none;
+}
+
+.hydration-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.hydration-progress-ring {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 6px solid #bae6fd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #0369a1;
+  background: #fff;
+}
+
+.progress-bar {
+  height: 12px;
+  width: 100%;
+  background: rgba(15, 23, 42, 0.1);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 1.5rem;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0ea5e9, #22d3ee);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.hydration-history {
+  margin-top: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.hydration-history-item {
+  display: grid;
+  grid-template-columns: 60px 1fr 70px;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.hydration-history-bar {
+  height: 8px;
+  background: rgba(15, 23, 42, 0.12);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.hydration-history-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #14b8a6, #0ea5e9);
+}
+
+.metric-highlight {
+  background: linear-gradient(135deg, #fef9c3, #fde68a);
+  border: none;
+}
+
+.metric-highlight-value {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #78350f;
+  display: flex;
+  flex-direction: column;
+}
+
+.loading-spinner-container {
+  width: 100%;
 }
 
 /* Loading and empty states */

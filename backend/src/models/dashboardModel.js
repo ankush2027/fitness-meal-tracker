@@ -46,45 +46,39 @@ export const getMacroBreakdown = async (userId) => {
   return macros;
 };
 
-export const getWaterProgress = async (userId, dailyGoal = 3000) => {
-  const [[row]] = await db.query(
+export const getHydrationSummary = async (userId, dailyGoal = 3000) => {
+  const [[today]] = await db.query(
     `SELECT COALESCE(SUM(amount_ml), 0) AS total
      FROM water_logs
-     WHERE user_id = ?
-       AND DATE(logged_at) = CURDATE()`,
+     WHERE user_id = ? AND DATE(logged_at) = CURDATE()`,
     [userId],
   );
-  const total = row.total;
+
+  const [history] = await db.query(
+    `SELECT DATE(logged_at) AS date, SUM(amount_ml) AS total
+     FROM water_logs
+     WHERE user_id = ? AND logged_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+     GROUP BY DATE(logged_at)
+     ORDER BY DATE(logged_at) ASC`,
+    [userId],
+  );
+
   return {
     goal: dailyGoal,
-    total,
-    percent: Math.min(100, Math.round((total / dailyGoal) * 100)),
+    today: today.total,
+    history,
+    percent: Math.min(100, Math.round((today.total / dailyGoal) * 100)),
   };
 };
 
-export const getWellnessSnapshot = async (userId) => {
+export const getLatestBodyMetric = async (userId) => {
   const [[latest]] = await db.query(
-    `SELECT mood, energy_level, sleep_hours, log_date
-     FROM wellness_logs
+    `SELECT weight_kg, body_fat_percent, notes, recorded_at
+     FROM body_metrics
      WHERE user_id = ?
-     ORDER BY log_date DESC
+     ORDER BY recorded_at DESC, created_at DESC
      LIMIT 1`,
     [userId],
   );
-
-  const [[averages]] = await db.query(
-    `SELECT
-        ROUND(COALESCE(AVG(energy_level), 0), 1) AS energyAvg,
-        ROUND(COALESCE(AVG(sleep_hours), 0), 1) AS sleepAvg
-     FROM wellness_logs
-     WHERE user_id = ?
-       AND log_date >= DATE_SUB(CURDATE(), INTERVAL 14 DAY)`,
-    [userId],
-  );
-
-  return {
-    latest: latest || null,
-    averages,
-  };
+  return latest || null;
 };
-

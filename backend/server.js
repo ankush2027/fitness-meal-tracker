@@ -11,6 +11,7 @@ import dashboardRoutes from "./src/routes/dashboardRoutes.js";
 import exerciseRoutes from "./src/routes/exerciseRoutes.js";
 import suggestionRoutes from "./src/routes/suggestionRoutes.js";
 import waterRoutes from "./src/routes/waterRoutes.js";
+import bodyMetricRoutes from "./src/routes/bodyMetricRoutes.js";
 import wellnessRoutes from "./src/routes/wellnessRoutes.js";
 
 dotenv.config();
@@ -55,6 +56,7 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/exercises", exerciseRoutes);
 app.use("/api/suggestions", suggestionRoutes);
 app.use("/api/water", waterRoutes);
+app.use("/api/body-metrics", bodyMetricRoutes);
 app.use("/api/wellness", wellnessRoutes);
 
 app.use((req, res) => {

@@ -33,7 +33,8 @@ fitness-meal-tracker/
    ```
 
 3. **Configure environment**
-   - Copy `backend/env.example` to `backend/.env` and update values (DB credentials, JWT secret, client URL).
+   - Copy `backend/env.example` to `backend/.env` and update values (DB credentials, JWT secret, client URL, `DAILY_WATER_GOAL_ML`).
+   - (Optional) Copy `frontend/.env.example` to `frontend/.env` and set `VITE_API_URL` + `VITE_WATER_GOAL_ML` to match your backend.
    - Ensure MySQL server is running and accessible via the credentials you set.
 
 4. **Provision database**
@@ -60,10 +61,12 @@ fitness-meal-tracker/
 - **Authentication:** Secure signup/login with bcrypt-hashed passwords and JWT-protected routes.
 - **Workout Tracker:** CRUD workouts (type, duration, calories, date).
 - **Meal Tracker:** Log meals with macros and calories.
-- **Progress Dashboard:** Calorie summaries, macro breakdown, recent workout charts (Recharts).
+- **Hydration Tracker:** Quick-add water buttons, CRUD logs, daily goal progress, and weekly history.
+- **Body Metrics Tracker:** Record weight/body-fat trends with notes and view the latest snapshot on the dashboard.
+- **Progress Dashboard:** Calorie summaries, macro breakdown, hydration progress, body metric highlights, recent workout charts (Recharts).
 - **Exercise Library:** Searchable catalog with descriptions, media, and muscle groups.
 - **Diet Suggestions:** Goal-based meal recommendations sourced from `meal_suggestions`.
-- **Responsive UI:** Functional components, hooks, and reusable layout/utility classes.
+- **Responsive UI:** Functional components, hooks, toasts, and reusable layout/utility classes.
 
 ## Backend Highlights
 
@@ -71,15 +74,16 @@ fitness-meal-tracker/
 - MySQL connection pooling via `mysql2/promise`.
 - Input validation with `express-validator`.
 - Centralized async error handling and auth middleware.
-- REST endpoints under `/api/**` covering auth, workouts, meals, dashboard, exercises, and suggestions.
+- REST endpoints under `/api/**` covering auth, workouts, meals, hydration, body metrics, dashboard, exercises, and suggestions.
 
 ## Frontend Highlights
 
 - React Router with protected layouts and auth context.
+- Global toast + loading spinner components for consistent UX feedback.
 - Axios services (`src/services/*`) for all backend entities.
-- Dashboard components (`StatsCards`, chart wrappers) built with Recharts.
-- Dedicated pages for login, signup, workouts, meals, exercises, suggestions, and dashboard.
-- Reusable layout (`AppLayout`, `Navbar`) and UI utility classes defined in `App.css`.
+- Dashboard components (`StatsCards`, chart wrappers, HydrationCard, BodyMetricCard) built with Recharts + custom visuals.
+- Dedicated pages for login, signup, workouts, meals, hydration, body metrics, exercises, suggestions, and dashboard.
+- Reusable layout (`AppLayout`, `Navbar`) and refreshed UI theming defined in `App.css`.
 
 ## Next Steps
 

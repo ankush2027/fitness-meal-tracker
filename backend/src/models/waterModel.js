@@ -1,3 +1,4 @@
+
 import db from "../config/db.js";
 
 export const getWaterLogsByUser = async (userId) => {

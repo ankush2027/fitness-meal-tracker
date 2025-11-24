@@ -10,8 +10,8 @@ import NotFound from "./pages/NotFound.jsx";
 import Signup from "./pages/Signup.jsx";
 import Suggestions from "./pages/Suggestions.jsx";
 import Workouts from "./pages/Workouts.jsx";
-import Water from "./pages/Water.jsx";
-import Wellness from "./pages/Wellness.jsx";
+import Hydration from "./pages/Hydration.jsx";
+import BodyMetrics from "./pages/BodyMetrics.jsx";
 
 function App() {
   return (
@@ -31,8 +31,8 @@ function App() {
         <Route path="/meals" element={<Meals />} />
         <Route path="/exercises" element={<Exercises />} />
         <Route path="/suggestions" element={<Suggestions />} />
-        <Route path="/water" element={<Water />} />
-        <Route path="/wellness" element={<Wellness />} />
+        <Route path="/hydration" element={<Hydration />} />
+        <Route path="/body-metrics" element={<BodyMetrics />} />
       </Route>
 
       <Route path="/home" element={<Navigate to="/" replace />} />
