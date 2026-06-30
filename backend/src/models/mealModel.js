@@ -19,16 +19,17 @@ export const getMealById = async (userId, mealId) => {
 export const createMeal = async (userId, meal) => {
   const [result] = await db.query(
     `INSERT INTO meals
-    (user_id, meal_name, meal_type, calories, protein, carbs, fats, meal_date)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    (user_id, meal_name, meal_type, calories, protein, carbs, fats, fiber, meal_date)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       userId,
       meal.meal_name,
       meal.meal_type,
-      meal.calories,
-      meal.protein,
-      meal.carbs,
-      meal.fats,
+      meal.calories || 0,
+      meal.protein || 0,
+      meal.carbs || 0,
+      meal.fats || 0,
+      meal.fiber || 0,
       meal.meal_date,
     ],
   );
@@ -38,15 +39,16 @@ export const createMeal = async (userId, meal) => {
 export const updateMeal = async (userId, mealId, meal) => {
   await db.query(
     `UPDATE meals
-     SET meal_name = ?, meal_type = ?, calories = ?, protein = ?, carbs = ?, fats = ?, meal_date = ?
+     SET meal_name = ?, meal_type = ?, calories = ?, protein = ?, carbs = ?, fats = ?, fiber = ?, meal_date = ?
      WHERE id = ? AND user_id = ?`,
     [
       meal.meal_name,
       meal.meal_type,
-      meal.calories,
-      meal.protein,
-      meal.carbs,
-      meal.fats,
+      meal.calories || 0,
+      meal.protein || 0,
+      meal.carbs || 0,
+      meal.fats || 0,
+      meal.fiber || 0,
       meal.meal_date,
       mealId,
       userId,
@@ -54,6 +56,7 @@ export const updateMeal = async (userId, mealId, meal) => {
   );
   return getMealById(userId, mealId);
 };
+
 
 export const deleteMeal = async (userId, mealId) => {
   await db.query("DELETE FROM meals WHERE id = ? AND user_id = ?", [

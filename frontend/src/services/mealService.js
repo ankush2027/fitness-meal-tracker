@@ -10,6 +10,11 @@ export const createMeal = async (payload) => {
   return data.meal;
 };
 
+export const analyzeAndSaveMeal = async (payload) => {
+  const { data } = await api.post("/meals/analyze-save", payload);
+  return data;
+};
+
 export const updateMeal = async (id, payload) => {
   const { data } = await api.put(`/meals/${id}`, payload);
   return data.meal;
@@ -18,4 +23,5 @@ export const updateMeal = async (id, payload) => {
 export const deleteMeal = async (id) => {
   await api.delete(`/meals/${id}`);
 };
+
 
